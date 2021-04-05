@@ -18,7 +18,13 @@ const routes = [
         path: '/home/2',
         name: 'home2',
         component: () => import('./b')
-      }
+      },
+      {
+        path: '/orderDetail/:id',
+        name: 'orderDetail',
+        // component: () => import(/* webpackChunkName: "orderDetail" */ './orderDetail.vue'),
+        component: () => import('./orderDetail.vue'),
+      },
     ]
   },
   {
