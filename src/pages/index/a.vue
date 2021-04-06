@@ -1,8 +1,11 @@
-
 <template>
   <div class="order-list-wrap">
     <div class="order-list-content">
-      <s-header :title="'工单列表'" :back="'/user'" :isleftarrow="true"></s-header>
+      <s-header
+        :title="'工单列表'"
+        :back="'/user'"
+        :isleftarrow="true"
+      ></s-header>
       <van-tabs type="card" color="#E4E4E4" class="tabStyle" @click="changeTab">
         <van-tab title="检测中(1)" name="checking"></van-tab>
         <van-tab title="拍卖中(1)" name="Auction"></van-tab>
@@ -51,7 +54,7 @@
                     <van-button
                       type="primary"
                       size="small"
-                      @click="orderDetail(item, '111111')"
+                      @click.stop="orderDetail(item, '111111')"
                       >跟进</van-button
                     >
                   </span>
@@ -68,6 +71,9 @@
         </van-list>
       </van-pull-refresh>
     </div>
+
+    <follow-up-modal :type="'1'" :show="show" @callback="cancelShow">
+    </follow-up-modal>
   </div>
 </template>
 
@@ -76,10 +82,12 @@ import { reactive, toRefs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { search } from './service/api';
 import sHeader from '@/components/SimpleHeader';
+import followUpModal from './followUpModal';
 
 export default {
   components: {
     sHeader,
+    followUpModal,
   },
   setup() {
     const route = useRoute();
@@ -100,7 +108,12 @@ export default {
       totalPage: 0,
       page: 1,
       orderBy: '',
+      show: false,
+      value: '',
+      showPicker: false,
+      password: '',
     });
+    const columns = ['检测中', '拍卖中', '已成交', '战败'];
 
     // onMounted(() => {
     //   init()
@@ -120,8 +133,8 @@ export default {
       } = await search({
         pageNumber: state.page,
         goodsCategoryId: categoryId,
-        keyword: state.keyword,// 手机号 关键字
-        orderBy: state.orderBy,// 选中的是什么tab
+        keyword: state.keyword, // 手机号 关键字
+        orderBy: state.orderBy, // 选中的是什么tab
       });
 
       state.orderList = state.orderList.concat(list);
@@ -137,12 +150,16 @@ export default {
     const orderDetail = (item, index) => {
       console.log(item, 'dddd', index);
       if (index) {
-        console.log('chuli','起弹窗');
+        console.log('chuli', '起弹窗');
+        state.show = true;
       } else {
         router.push({ path: `/orderDetail/${item.goodsId}` });
       }
     };
 
+    const cancelShow = () => {
+      state.show = false;
+    };
     const getSearch = () => {
       onRefresh();
     };
@@ -174,12 +191,14 @@ export default {
 
     return {
       ...toRefs(state),
+      columns,
       goBack,
       orderDetail,
       getSearch,
       changeTab,
       onLoad,
       onRefresh,
+      cancelShow, // 取消展示跟进
     };
   },
 };
@@ -245,12 +264,20 @@ export default {
   //     margin-top: 10px;
   //   }
   // }
+  // .tabStyle deep .van-tabs__nav--card{
+  //     margin: 0;
+  //   }
+
+  .van-tabs--card > .van-tabs__wrap {
+    margin: 0 !important;
+  }
   .tabStyle {
     margin: 0;
-    position: fixed;//
-    top: 47px;//
-    width: 100%;//
-    .van-tabs__nav--card {
+    position: fixed; //
+    top: 47px; //
+    width: 100%; //
+
+    .iiiiiii {
       margin: 0;
     }
   }

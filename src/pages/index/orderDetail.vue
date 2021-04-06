@@ -70,8 +70,8 @@ export default {
     left: 10px;
   }
   .detail-content {
-    margin-top: 50px;
-    height: calc(100vh - 105px);
+    margin-top: 90px;
+    height: calc(100vh - 90px);
   }
 }
 </style>
