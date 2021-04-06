@@ -1,6 +1,6 @@
 <template>
   <div class="order-detail">
-    <s-header :name="'工单详情'"></s-header>
+    <s-header :title="'工单详情'" :isleftarrow="true"></s-header>
     <van-sidebar class="sideTitle">
       <van-sidebar-item title="标签名称" disabled />
     </van-sidebar>
@@ -70,7 +70,7 @@ export default {
     left: 10px;
   }
   .detail-content {
-    margin-top: 100px;
+    margin-top: 50px;
     height: calc(100vh - 105px);
   }
 }

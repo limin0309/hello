@@ -1,8 +1,8 @@
 
 <template>
-  <div class="product-list-wrap">
-    <div class="product-list-content">
-      <s-header :name="'工单列表'" :back="'/user'"></s-header>
+  <div class="order-list-wrap">
+    <div class="order-list-content">
+      <s-header :title="'工单列表'" :back="'/user'" :isleftarrow="true"></s-header>
       <van-tabs type="card" color="#E4E4E4" class="tabStyle" @click="changeTab">
         <van-tab title="检测中(1)" name="checking"></van-tab>
         <van-tab title="拍卖中(1)" name="Auction"></van-tab>
@@ -14,27 +14,27 @@
       <van-pull-refresh
         v-model="refreshing"
         @refresh="onRefresh"
-        class="product-list-refresh"
+        class="order-list-refresh"
       >
         <van-list
           v-model:loading="loading"
           :finished="finished"
-          :finished-text="productList.length ? '没有更多了' : '搜索工单'"
+          :finished-text="orderList.length ? '没有更多了' : '搜索工单'"
           @load="onLoad"
           @offset="10"
         >
           <!-- <p v-for="item in list" :key="item">{{ item }}</p> -->
-          <template v-if="productList.length">
+          <template v-if="orderList.length">
             <div
-              class="product-item"
-              v-for="(item, index) in productList"
+              class="order-item"
+              v-for="(item, index) in orderList"
               :key="index"
-              @click="productDetail(item)"
+              @click="orderDetail(item)"
             >
               <div class="orderStatus">
                 <span>工单号 : {{ 'C101010101' }}</span> <span>检测中</span>
               </div>
-              <div class="product-info">
+              <div class="order-info">
                 <p class="people">
                   <span>{{ item.aaa || '张花花' }}</span>
                   <span>13612231222</span>
@@ -51,7 +51,7 @@
                     <van-button
                       type="primary"
                       size="small"
-                      @click="productDetail(item, '111111')"
+                      @click="orderDetail(item, '111111')"
                       >跟进</van-button
                     >
                   </span>
@@ -90,7 +90,7 @@ export default {
       list: [],
       loading: false,
       finished: false,
-      productList: [
+      orderList: [
         { goodsName: 'kk', goodsIntro: 'uu', sellingPrice: '88' },
         { goodsName: 'kk', goodsIntro: 'uu', sellingPrice: '88' },
         { goodsName: 'kk', goodsIntro: 'uu', sellingPrice: '88' },
@@ -124,7 +124,7 @@ export default {
         orderBy: state.orderBy,// 选中的是什么tab
       });
 
-      state.productList = state.productList.concat(list);
+      state.orderList = state.orderList.concat(list);
       state.totalPage = data.totalPage;
       state.loading = false;
       if (state.page >= data.totalPage) state.finished = true;
@@ -134,12 +134,12 @@ export default {
       router.go(-1);
     };
 
-    const productDetail = (item, index) => {
+    const orderDetail = (item, index) => {
       console.log(item, 'dddd', index);
       if (index) {
         console.log('chuli','起弹窗');
       } else {
-        router.push({ path: `/product/${item.goodsId}` });
+        router.push({ path: `/orderDetail/${item.goodsId}` });
       }
     };
 
@@ -152,7 +152,7 @@ export default {
         state.page = state.page + 1;
       }
       if (state.refreshing) {
-        state.productList = [];
+        state.orderList = [];
         state.refreshing = false;
       }
       init();
@@ -175,7 +175,7 @@ export default {
     return {
       ...toRefs(state),
       goBack,
-      productDetail,
+      orderDetail,
       getSearch,
       changeTab,
       onLoad,
@@ -187,7 +187,7 @@ export default {
 
 <style lang="less" scoped>
 @import '@/common/style/mixin';
-.product-list-content {
+.order-list-content {
   position: fixed;
   left: 0;
   top: 0;
@@ -248,7 +248,7 @@ export default {
   .tabStyle {
     margin: 0;
     position: fixed;//
-    top: 44px;//
+    top: 47px;//
     width: 100%;//
     .van-tabs__nav--card {
       margin: 0;
@@ -261,8 +261,8 @@ export default {
   overflow-y: scroll;
   margin-top: 78px;
 }
-.product-list-refresh {
-  .product-item {
+.order-list-refresh {
+  .order-item {
     padding: 10px;
     border-bottom: 4px solid #dcdcdc;
     .orderStatus {
@@ -271,7 +271,7 @@ export default {
       border-bottom: 1px solid #ccc;
       padding-bottom: 5px;
     }
-    .product-info {
+    .order-info {
       padding: 5px;
       font-size: 14px;
 

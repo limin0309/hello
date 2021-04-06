@@ -1,11 +1,8 @@
+
 <template>
-  <header class="simple-header van-hairline--bottom">
-    <i v-if="!isback" class="nbicon nbfanhui" @click="goBack"></i>
-    <i v-else>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>
-    <div class="simple-header-name">{{ name }}</div>
-    <i class="nbicon nbmore"></i>
-  </header>
-  <div class="block" />
+  <div id="NavBar">
+    <van-nav-bar :title="title" :left-arrow="isleftarrow" @click-left="onClickLeft" />
+  </div>
 </template>
 
 <script>
@@ -13,7 +10,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 export default {
   props: {
-    name: {
+    title: {
       type: String,
       default: ''
     },
@@ -21,7 +18,7 @@ export default {
       type: String,
       default: ''
     },
-    noback: {
+    isleftarrow: {
       type: Boolean,
       default: false
     }
@@ -30,7 +27,7 @@ export default {
   setup(props, ctx) {
     const isback = ref(props.noback)
     const router = useRouter()
-    const goBack = () => {
+    const onClickLeft = () => {
       if (!props.back) {
         router.go(-1)
       } else {
@@ -39,7 +36,7 @@ export default {
       ctx.emit('callback')
     }
     return {
-      goBack,
+      onClickLeft,
       isback
     }
   }
@@ -47,24 +44,23 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import '../common/style/mixin';
-  .simple-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 10000;
-    .fj();
-    .wh(100%, 44px);
-    line-height: 44px;
-    padding: 0 10px;
-    .boxSizing();
-    color: #252525;
-    background: #fff;
-    .simple-header-name {
-      font-size: 14px;
-    }
-  }
-  .block {
-    height: 44px;
-  }
+  #NavBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 46px;
+  line-height: 46px;
+  width:100%;
+  z-index: 100;
+}
+.van-nav-bar{
+  font-size: 18px!important;
+  /* 设置导航栏的渐变色 */
+  background: #4578BC;
+  border:0;
+}
+.van-hairline--bottom::after {
+     /* 去除导航栏底部的白色横线 */
+    border-bottom-width: 0px!important;
+}
 </style>
