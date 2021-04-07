@@ -1,88 +1,104 @@
 <template>
-  <div class="order-list-wrap">
-    <div class="order-list-content">
-      <s-header
-        :title="'工单列表'"
-        :back="'/user'"
-        :isleftarrow="true"
-      ></s-header>
-      <van-tabs type="card" color="#E4E4E4" class="tabStyle" @click="changeTab">
-        <van-tab title="检测中(1)" name="checking"></van-tab>
-        <van-tab title="拍卖中(1)" name="Auction"></van-tab>
-        <van-tab title="已成交(1)" name="DealDone"></van-tab>
-        <van-tab title="战败(1)" name="Defeated"></van-tab>
-      </van-tabs>
-    </div>
-    <div class="content">
-      <van-pull-refresh
-        v-model="refreshing"
-        @refresh="onRefresh"
-        class="order-list-refresh"
-      >
-        <van-list
-          v-model:loading="loading"
-          :finished="finished"
-          :finished-text="orderList.length ? '没有更多了' : '搜索工单'"
-          @load="onLoad"
-          @offset="10"
-        >
-          <!-- <p v-for="item in list" :key="item">{{ item }}</p> -->
-          <template v-if="orderList.length">
-            <div
-              class="order-item"
-              v-for="(item, index) in orderList"
-              :key="index"
-              @click="orderDetail(item)"
-            >
-              <div class="orderStatus">
-                <span>工单号 : {{ 'C101010101' }}</span> <span>检测中</span>
-              </div>
-              <div class="order-info">
-                <p class="people">
-                  <span>{{ item.aaa || '张花花' }}</span>
-                  <span>13612231222</span>
-                </p>
-                <p class="carName">
-                  {{ '雪佛兰迈锐宝XL 2018款530T双离合锐耀版' }}
-                </p>
-                <span class="carInfo">{{
-                  '北京|2018/09/01上牌|5.5万公里|白色|北京一站'
-                }}</span>
-                <p class="updateTime">
-                  <span>{{ '工单更新时间：2021-03-26  16:30:19' }}</span>
-                  <span>
-                    <van-button
-                      type="primary"
-                      size="small"
-                      @click.stop="orderDetail(item, '111111')"
-                      >跟进</van-button
-                    >
-                  </span>
-                </p>
-              </div>
-            </div>
-          </template>
-          <img
-            class="empty"
-            v-else
-            src="https://s.yezgea02.com/1604041313083/kesrtd.png"
-            alt="搜索"
-          />
-        </van-list>
-      </van-pull-refresh>
-    </div>
+  <div>
 
-    <follow-up-modal :type="'1'" :show="show" @callback="cancelShow">
-    </follow-up-modal>
+    <div v-if="notGetCode" class="errmsg">
+      <p>错误提示：{{ notGetCodeMsg }}</p>
+    </div>
+    <div>
+      <div class="order-list-wrap">
+        <div class="order-list-content">
+          <s-header
+            :title="'工单列表'"
+            :back="'/user'"
+            :isleftarrow="true"
+          ></s-header>
+          <van-tabs
+            type="card"
+            color="#E4E4E4"
+            class="tabStyle"
+            @click="changeTab"
+          >
+            <van-tab title="检测中(1)" name="checking"></van-tab>
+            <van-tab title="拍卖中(1)" name="Auction"></van-tab>
+            <van-tab title="已成交(1)" name="DealDone"></van-tab>
+            <van-tab title="战败(1)" name="Defeated"></van-tab>
+          </van-tabs>
+        </div>
+        <div class="content">
+          <van-pull-refresh
+            v-model="refreshing"
+            @refresh="onRefresh"
+            class="order-list-refresh"
+          >
+            <van-list
+              v-model:loading="loading"
+              :finished="finished"
+              :finished-text="orderList.length ? '没有更多了' : '搜索工单'"
+              @load="onLoad"
+              @offset="10"
+            >
+              <!-- <p v-for="item in list" :key="item">{{ item }}</p> -->
+              <template v-if="orderList.length">
+                <div
+                  class="order-item"
+                  v-for="(item, index) in orderList"
+                  :key="index"
+                  @click="orderDetail(item)"
+                >
+                  <div class="orderStatus">
+                    <span>工单号 : {{ 'C101010101' }}</span> <span>检测中</span>
+                  </div>
+                  <div class="order-info">
+                    <p class="people">
+                      <span>{{ item.aaa || '张花花' }}</span>
+                      <span>13612231222</span>
+                    </p>
+                    <p class="carName">
+                      {{ '雪佛兰迈锐宝XL 2018款530T双离合锐耀版' }}
+                    </p>
+                    <span class="carInfo">{{
+                      '北京|2018/09/01上牌|5.5万公里|白色|北京一站'
+                    }}</span>
+                    <p class="updateTime">
+                      <span>{{ '工单更新时间：2021-03-26  16:30:19' }}</span>
+                      <span>
+                        <van-button
+                          plain
+                          type="primary"
+                          size="small"
+                          @click.stop="orderDetail(item, '111111')"
+                          >跟进</van-button
+                        >
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </template>
+              <img
+                class="empty"
+                v-else
+                src="https://s.yezgea02.com/1604041313083/kesrtd.png"
+                alt="搜索"
+              />
+            </van-list>
+          </van-pull-refresh>
+        </div>
+
+        <follow-up-modal :type="'1'" :show="show" @callback="cancelShow">
+        </follow-up-modal>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { reactive, toRefs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { search } from './service/api';
+import { search, getUserInfo } from './service/api';
 import sHeader from '@/components/SimpleHeader';
 import followUpModal from './followUpModal';
+import { parseQueryFromSearch, ISQYWX, basePageUrl } from '@/utils/utils';
+import { Toast } from 'vant'
 
 export default {
   components: {
@@ -112,6 +128,12 @@ export default {
       value: '',
       showPicker: false,
       password: '',
+      notGetCode: false, // 未能获取企业微信用户code码
+      notGetCodeMsg: "未找到用户code码，无法获取用户信息",
+      stateMap: {
+        // 智慧门店
+        aistore: `${basePageUrl}customer-flow/statistics`
+      }
     });
     const columns = ['检测中', '拍卖中', '已成交', '战败'];
 
@@ -119,14 +141,55 @@ export default {
     //   init()
     // })
 
+
+    let { code='4mfNaZhA3Qxekqnl3YYh4zCWAKRttym6S36WAM6Eqao', state1='aistore', ...otherParams } = parseQueryFromSearch();
+    console.log(code, state1);
+    // 校验有没有配置 state 值
+    const url = state.stateMap[state1];
+    let domain = "taoche.com";
+    if (process.env.NODE_ENV === "development") {
+      domain = "localhost";
+    }
+    if (!url) {
+      Toast("请配项目的state值！");
+      return;
+    }
+    // 判断是否在企业微信，获取用户信息 设置token
+      if (code) {
+        const toast1 = Toast.loading({
+          duration: 0,
+          message: "正在校验用户信息...",
+          forbidClick: true
+        });
+        getUserInfo(code)
+          .then(res => {
+            // {"code":0,"message":"成功","data":"b32568f54bbe4192b3c478e3849efaeb","success":true}
+            toast1.clear();
+            if (res.code === 0) {
+              if (res.data) {
+                Cookies.set("Authorization", res.data, { domain, expires: 1 });
+                // 跳转
+                init()
+              } else {
+                Toast("未能获取到token!");
+              }
+            } else {
+              console.log('else 接口报错')
+                Cookies.set("Authorization",'b32568f54bbe4192b3c478e3849efaeb', { domain, expires: 1 });
+                // 跳转
+                init()
+              Toast(res.message);
+            }
+          })
+          .catch(() => {
+            toast1.clear();
+          });
+      } else {
+        state.notGetCode = true;
+      }
+
     const init = async () => {
       const { categoryId } = route.query;
-      if (!categoryId && !state.keyword) {
-        // Toast.fail('请输入关键词')
-        state.finished = true;
-        state.loading = false;
-        return;
-      }
       const {
         data,
         data: { list },
@@ -268,17 +331,16 @@ export default {
   //     margin: 0;
   //   }
 
-  .van-tabs--card > .van-tabs__wrap {
-    margin: 0 !important;
-  }
   .tabStyle {
     margin: 0;
     position: fixed; //
     top: 47px; //
     width: 100%; //
-
-    .iiiiiii {
-      margin: 0;
+    ::v-deep {
+      .van-tabs__wrap .van-tabs__nav--card {
+        margin: 0;
+        z-index: 99999;
+      }
     }
   }
 }

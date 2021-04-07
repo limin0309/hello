@@ -26,6 +26,7 @@
         </van-popup>
         <van-field
           v-model="vinCode"
+          v-show="typeStatus=='1'"
           name="VIN码"
           label="VIN码"
           placeholder="VIN码"
@@ -61,7 +62,9 @@ export default {
       appraiseStatus:'',
       showPicker: false,
       vinCode: '',
+      typeStatus:''
     });
+    state.typeStatus= props.type
     state.show = props.show;
     const columns = [
       {
